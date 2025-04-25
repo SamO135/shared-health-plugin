@@ -1,6 +1,7 @@
 package io.github.SamO135.sharedHealthPlugin;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.Bukkit;
+import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -32,6 +33,9 @@ public class SharedHealthPlugin extends JavaPlugin {
         // set up dimension handler
         dimensionResetHandler = DimensionResetHandler.getInstance();
         dimensionResetHandler.setPlugin(this);
+
+        // load custom dimension - needed so players can rejoin the server in this dimension
+        new WorldCreator("world_run").createWorld();
     }
 
     @Override
