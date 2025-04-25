@@ -8,6 +8,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class SharedHealthPluginCommands {
@@ -26,6 +27,18 @@ public class SharedHealthPluginCommands {
                             .executes(this::logPlayerHealth))
                     .then(Commands.literal("syncPlayerHealth")
                             .executes(this::syncPlayerHealth))
+            )
+            .then(Commands.literal("timer")
+                    .then(Commands.literal("start")
+                            .executes(this::startTimer))
+                    .then(Commands.literal("pause")
+                            .executes(this::pauseTimer))
+                    .then(Commands.literal("reset")
+                            .executes(this::resetTimer))
+                    .then(Commands.literal("show")
+                            .executes(this::showTimer))
+                    .then(Commands.literal("hide")
+                            .executes(this::hideTimer))
             );
 
     private int showLogs(CommandContext<CommandSourceStack> ctx) {
@@ -43,6 +56,37 @@ public class SharedHealthPluginCommands {
     private int syncPlayerHealth(CommandContext<CommandSourceStack> ctx) {
         double syncedHealth = plugin.syncPlayerHealth();
         plugin.getLogger().info("All player's health synced to: " + syncedHealth);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int startTimer(CommandContext<CommandSourceStack> ctx) {
+        plugin.getTimer().resume();
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int pauseTimer(CommandContext<CommandSourceStack> ctx) {
+        plugin.getTimer().pause();
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int resetTimer(CommandContext<CommandSourceStack> ctx) {
+        plugin.getTimer().reset();
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int showTimer(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+        if (sender instanceof Player player){
+            plugin.showTimerFor(player);
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int hideTimer(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+        if (sender instanceof Player player){
+            plugin.hideTimerFor(player);
+        }
         return Command.SINGLE_SUCCESS;
     }
 
