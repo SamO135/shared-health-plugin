@@ -11,12 +11,12 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
-class PlayerDamageListener implements Listener {
+class PlayerListener implements Listener {
     private SharedHealthPlugin plugin;
     private Player lastSatiatedHealPlayer;
     private long lastSatiatedHealTime = 0L;
 
-    public PlayerDamageListener(SharedHealthPlugin plugin) {
+    public PlayerListener(SharedHealthPlugin plugin) {
         this.plugin = plugin;
     }
 

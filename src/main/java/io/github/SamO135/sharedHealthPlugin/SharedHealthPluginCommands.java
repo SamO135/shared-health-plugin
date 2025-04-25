@@ -7,7 +7,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import org.bukkit.Bukkit;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -39,6 +39,12 @@ public class SharedHealthPluginCommands {
                             .executes(this::showTimer))
                     .then(Commands.literal("hide")
                             .executes(this::hideTimer))
+            )
+            .then(Commands.literal("run")
+                    .then(Commands.literal("start")
+                            .executes(this::startRun))
+                    .then(Commands.literal("end")
+                            .executes(this::endRun))
             );
 
     private int showLogs(CommandContext<CommandSourceStack> ctx) {
@@ -90,10 +96,20 @@ public class SharedHealthPluginCommands {
         return Command.SINGLE_SUCCESS;
     }
 
+    private int startRun(CommandContext<CommandSourceStack> ctx) {
+        this.plugin.getDimensionResetHandler().startRun();
+        int countdownTime = 5;
+        Bukkit.getScheduler().runTaskTimer(this.plugin, new Countdown(countdownTime), 1L, 30L);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int endRun(CommandContext<CommandSourceStack> ctx) {
+        this.plugin.getDimensionResetHandler().endRun();
+        return Command.SINGLE_SUCCESS;
+    }
 
     public LiteralCommandNode<CommandSourceStack> getCommandNode(){
         return commandTree.build();
     }
-
 }
 

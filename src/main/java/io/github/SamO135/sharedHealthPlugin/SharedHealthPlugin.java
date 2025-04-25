@@ -12,11 +12,12 @@ public class SharedHealthPlugin extends JavaPlugin {
     public boolean loggingEnabled = false;
     private Timer timer;
     private Set<UUID> hiddenTimerPlayers = new HashSet<>();
+    private DimensionResetHandler dimensionResetHandler;
 
     @Override
     public void onEnable() {
         // register the player listener
-        getServer().getPluginManager().registerEvents(new PlayerDamageListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 
         // register the commands
         SharedHealthPluginCommands commandTree = new SharedHealthPluginCommands(this);
@@ -27,6 +28,10 @@ public class SharedHealthPlugin extends JavaPlugin {
         // set up timer
         timer = new Timer(this);
         Bukkit.getScheduler().runTaskTimer(this, timer, 20L, 20L);
+
+        // set up dimension handler
+        dimensionResetHandler = DimensionResetHandler.getInstance();
+        dimensionResetHandler.setPlugin(this);
     }
 
     @Override
@@ -57,5 +62,9 @@ public class SharedHealthPlugin extends JavaPlugin {
 
     public void showTimerFor(Player player) {
         hiddenTimerPlayers.remove(player.getUniqueId());
+    }
+
+    public DimensionResetHandler getDimensionResetHandler() {
+        return dimensionResetHandler;
     }
 }
