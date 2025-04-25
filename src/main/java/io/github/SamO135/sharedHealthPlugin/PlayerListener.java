@@ -14,10 +14,12 @@ import java.util.logging.Logger;
 
 class PlayerDamageListener implements Listener {
     private final Logger logger;
+    private SharedHealthPlugin plugin;
     private Player lastSatiatedHealPlayer;
     private long lastSatiatedHealTime = 0L;
 
-    public PlayerDamageListener(JavaPlugin plugin) {
+    public PlayerDamageListener(SharedHealthPlugin plugin) {
+        this.plugin = plugin;
         this.logger = plugin.getLogger();
     }
 
@@ -25,7 +27,11 @@ class PlayerDamageListener implements Listener {
     public void onPlayerTakeDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player damagedPlayer)) return;
         if (event.getCause() == DamageCause.CUSTOM) return;
-        logger.info(damagedPlayer.getName() + " took " + event.getFinalDamage() + " damage from: " + event.getCause());
+
+        // logging
+        if (plugin.loggingEnabled) {
+            logger.info(damagedPlayer.getName() + " took " + event.getFinalDamage() + " damage from: " + event.getCause());
+        }
 
         double damage = event.getFinalDamage();
 
@@ -41,7 +47,11 @@ class PlayerDamageListener implements Listener {
     public void onPlayerRegainHealth(EntityRegainHealthEvent event) {
         if (!(event.getEntity() instanceof Player healedPlayer)) return;
         if (event.getRegainReason() == RegainReason.CUSTOM) return;
-        logger.info(healedPlayer.getName() + " healed " + event.getAmount() + " from " + event.getRegainReason() + " with " + healedPlayer.getSaturation() + " saturation");
+
+        // logging
+        if (plugin.loggingEnabled){
+            logger.info(healedPlayer.getName() + " healed " + event.getAmount() + " from " + event.getRegainReason() + " with " + healedPlayer.getSaturation() + " saturation");
+        }
 
         double healAmount = event.getAmount();
 
@@ -67,20 +77,11 @@ class PlayerDamageListener implements Listener {
     @EventHandler
     public void onPlayerDeath(EntityDeathEvent event) {
         if (!(event.getEntity() instanceof Player deadPlayer)) return;
-        logger.info(deadPlayer.getName() + " died");
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player != deadPlayer && !player.isDead()) {
                 player.setHealth(0.0);
             }
-        }
-    }
-
-    private void syncPlayerHealth() {
-        double sharedHealth = Bukkit.getOnlinePlayers().stream().mapToDouble(Player::getHealth).min().orElse(20d);
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            player.setHealth(sharedHealth);
         }
     }
 }
