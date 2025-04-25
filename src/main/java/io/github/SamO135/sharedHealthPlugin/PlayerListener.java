@@ -1,4 +1,6 @@
 package io.github.SamO135.sharedHealthPlugin;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,19 +10,14 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.logging.Logger;
 
 class PlayerDamageListener implements Listener {
-    private final Logger logger;
     private SharedHealthPlugin plugin;
     private Player lastSatiatedHealPlayer;
     private long lastSatiatedHealTime = 0L;
 
     public PlayerDamageListener(SharedHealthPlugin plugin) {
         this.plugin = plugin;
-        this.logger = plugin.getLogger();
     }
 
     @EventHandler
@@ -28,14 +25,20 @@ class PlayerDamageListener implements Listener {
         if (!(event.getEntity() instanceof Player damagedPlayer)) return;
         if (event.getCause() == DamageCause.CUSTOM) return;
 
+        double damage = event.getFinalDamage();
+        DamageCause damageCause = event.getCause();
+
         // logging
         if (plugin.loggingEnabled) {
-            logger.info(damagedPlayer.getName() + " took " + event.getFinalDamage() + " damage from: " + event.getCause());
+            plugin.getLogger().info(damagedPlayer.getName() + " took " + damage + " damage from: " + damageCause);
         }
 
-        double damage = event.getFinalDamage();
+        // create chat message
+        MiniMessage mm = MiniMessage.miniMessage();
+        Component message = mm.deserialize(damagedPlayer.getName() + "<grey> has taken <color:#f61c21>" + damage + " ❤<grey> damage.");
 
         for (Player player : Bukkit.getOnlinePlayers()) {
+            player.sendMessage(message);
             if (player != damagedPlayer){
                 player.damage(damage);
             }
@@ -50,7 +53,7 @@ class PlayerDamageListener implements Listener {
 
         // logging
         if (plugin.loggingEnabled){
-            logger.info(healedPlayer.getName() + " healed " + event.getAmount() + " from " + event.getRegainReason() + " with " + healedPlayer.getSaturation() + " saturation");
+            plugin.getLogger().info(healedPlayer.getName() + " healed " + event.getAmount() + " from " + event.getRegainReason() + " with " + healedPlayer.getSaturation() + " saturation");
         }
 
         double healAmount = event.getAmount();
