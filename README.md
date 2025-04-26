@@ -10,10 +10,10 @@ end a run using **/sh run end** before starting a new run, or else a new overwor
 and you will instead be teleported back to the spawnpoint of the old world.
 
 ## Commands
-All commands can be found by using the **/sh** prefix (which stand for **S**hared **H**ealth).
+All commands can be found by using the **/sh** prefix (which stands for **S**hared **H**ealth).
 
 ### Run
-- **/sh run start** *(requires op)* - Creates a new overworld dimension, and regenerates the nether and end dimentions. 
+- **/sh run start** *(requires op)* - Creates a new overworld dimension, and regenerates the nether and end dimensions. 
 All players get teleported to the new overworld dimension where a countdown starts. (The original overworld does not 
 get deleted, and acts as a sort of lobby dimension where players get sent between runs).
 
@@ -53,7 +53,7 @@ the server.
 - This plugin uses a boss bar to display the attempts counter at the top of the screen. Because of this, I'm relying on
 the resource pack [Invisible Boss Bars - Empty](https://modrinth.com/resourcepack/invisible-bars/version/1.0.1-empty) 
 to hide the bar, but keep the text. This resource pack is **not required**, but makes the HUD look a bit prettier. If 
-you would like to include this resource pack in your server you can follow these steps on [How to add the boss bar 
+you would like to include this resource pack in your server you can follow these steps on [how to add the boss bar 
 resource pack to your server](#how-to-add-the-boss-bar-resource-pack-to-your-server-optional).
 
 ## Notes
@@ -70,5 +70,5 @@ user preference).
 1. Copy the [download link for the resource pack](
 https://cdn.modrinth.com/data/sRddCRho/versions/yhCwsfH5/Invisible%20Bossbar%20%28empty%29.zip).
 2. Find and open the *server.properties* file in your server files.
-3. Set the resource-pack property to the download link you just copied ('*resource-pack=<download_link>*').
+3. Set the *resource-pack* property to the download link you just copied ('*resource-pack=<download_link>*').
 4. Done! Now your server will prompt new users to download the resource pack when they join.
