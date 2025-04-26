@@ -10,6 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 class PlayerListener implements Listener {
     private SharedHealthPlugin plugin;
@@ -85,6 +86,13 @@ class PlayerListener implements Listener {
             if (player != deadPlayer && !player.isDead()) {
                 player.setHealth(0.0);
             }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        if (plugin.isAttemptsShownFor(event.getPlayer())) {
+            this.plugin.getAttemptTracker().addPlayer(event.getPlayer());
         }
     }
 }

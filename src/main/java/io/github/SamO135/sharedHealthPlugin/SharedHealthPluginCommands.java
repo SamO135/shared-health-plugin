@@ -42,6 +42,14 @@ public class SharedHealthPluginCommands {
                     .then(Commands.literal("hide")
                             .executes(this::hideTimer))
             )
+            .then(Commands.literal("attempts")
+                    .then(Commands.literal("reset")
+                            .executes(this::resetAttempts))
+                    .then(Commands.literal("show")
+                            .executes(this::showAttempts))
+                    .then(Commands.literal("hide")
+                            .executes(this::hideAttempts))
+            )
             .then(Commands.literal("run")
                     .then(Commands.literal("start")
                             .executes(this::startRun))
@@ -100,6 +108,12 @@ public class SharedHealthPluginCommands {
 
     private int startRun(CommandContext<CommandSourceStack> ctx) {
         plugin.getDimensionResetHandler().startRun();
+        plugin.getAttemptTracker().incrementAttempt();
+        plugin.getAttemptTracker().addAllOnlinePlayers();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            plugin.showTimerFor(player);
+            plugin.showAttemptsFor(player);
+        }
         int countdownTime = 5;
         Bukkit.getScheduler().runTaskTimer(plugin, new Countdown(plugin, countdownTime), 1L, 30L);
         return Command.SINGLE_SUCCESS;
@@ -113,6 +127,27 @@ public class SharedHealthPluginCommands {
 
     private int deleteCustomWorld(CommandContext<CommandSourceStack> ctx) {
         plugin.getDimensionResetHandler().deleteCustomWorld();
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int resetAttempts(CommandContext<CommandSourceStack> ctx) {
+        plugin.getAttemptTracker().reset();
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int showAttempts(CommandContext<CommandSourceStack> ctx) {
+        if (ctx.getSource().getSender() instanceof Player sender) {
+            plugin.getAttemptTracker().addPlayer(sender);
+            plugin.showAttemptsFor(sender);
+        };
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int hideAttempts(CommandContext<CommandSourceStack> ctx) {
+        if (ctx.getSource().getSender() instanceof Player sender) {
+            plugin.getAttemptTracker().removePlayer(sender);
+            plugin.hideAttemptsFor(sender);
+        };
         return Command.SINGLE_SUCCESS;
     }
 

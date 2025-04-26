@@ -12,7 +12,9 @@ import java.util.UUID;
 public class SharedHealthPlugin extends JavaPlugin {
     public boolean loggingEnabled = false;
     private Timer timer;
-    private Set<UUID> hiddenTimerPlayers = new HashSet<>();
+    private AttemptTracker attemptTracker;
+    private Set<UUID> showTimerPlayers = new HashSet<>();
+    private Set<UUID> showAttemptsPlayers = new HashSet<>();
     private DimensionResetHandler dimensionResetHandler;
 
     @Override
@@ -30,6 +32,9 @@ public class SharedHealthPlugin extends JavaPlugin {
         // set up timer
         timer = new Timer(this);
         Bukkit.getScheduler().runTaskTimer(this, timer, 20L, 20L);
+
+        // set up attempt tracker
+        attemptTracker = new AttemptTracker();
 
         // set up dimension handler
         dimensionResetHandler = DimensionResetHandler.getInstance();
@@ -57,19 +62,35 @@ public class SharedHealthPlugin extends JavaPlugin {
         return timer;
     }
 
-    public boolean isTimerHiddenFor(Player player) {
-        return hiddenTimerPlayers.contains(player.getUniqueId());
+    public boolean isTimerShownFor(Player player) {
+        return showTimerPlayers.contains(player.getUniqueId());
     }
 
     public void hideTimerFor(Player player) {
-        hiddenTimerPlayers.add(player.getUniqueId());
+        showTimerPlayers.remove(player.getUniqueId());
     }
 
     public void showTimerFor(Player player) {
-        hiddenTimerPlayers.remove(player.getUniqueId());
+        showTimerPlayers.add(player.getUniqueId());
+    }
+
+    public boolean isAttemptsShownFor(Player player) {
+        return showAttemptsPlayers.contains(player.getUniqueId());
+    }
+
+    public void showAttemptsFor(Player player) {
+        showAttemptsPlayers.add(player.getUniqueId());
+    }
+
+    public void hideAttemptsFor(Player player) {
+        showAttemptsPlayers.remove(player.getUniqueId());
     }
 
     public DimensionResetHandler getDimensionResetHandler() {
         return dimensionResetHandler;
+    }
+
+    public AttemptTracker getAttemptTracker() {
+        return attemptTracker;
     }
 }

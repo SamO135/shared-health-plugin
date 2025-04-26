@@ -29,7 +29,7 @@ public class Timer implements Runnable{
         MiniMessage mm = MiniMessage.miniMessage();
         Component message = mm.deserialize(String.format("%02d:%02d:%02d", duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart()));
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (!this.plugin.isTimerHiddenFor(player)) {
+            if (this.plugin.isTimerShownFor(player)) {
                 player.sendActionBar(message);
             }
         }
