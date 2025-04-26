@@ -108,6 +108,7 @@ public class SharedHealthPluginCommands {
 
     private int startRun(CommandContext<CommandSourceStack> ctx) {
         plugin.getDimensionResetHandler().startRun();
+        plugin.clearPlayersInventory();
         plugin.getAttemptTracker().incrementAttempt();
         plugin.getAttemptTracker().addAllOnlinePlayers();
         for (Player player : Bukkit.getOnlinePlayers()) {

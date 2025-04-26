@@ -93,4 +93,12 @@ public class SharedHealthPlugin extends JavaPlugin {
     public AttemptTracker getAttemptTracker() {
         return attemptTracker;
     }
+
+    public void clearPlayersInventory() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.getInventory().clear();
+            player.getInventory().setArmorContents(null);
+            player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
+        }
+    }
 }
