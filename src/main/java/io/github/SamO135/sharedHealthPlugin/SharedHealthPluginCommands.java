@@ -27,6 +27,8 @@ public class SharedHealthPluginCommands {
                             .executes(this::logPlayerHealth))
                     .then(Commands.literal("syncPlayerHealth")
                             .executes(this::syncPlayerHealth))
+                    .then(Commands.literal("delete-custom-world")
+                            .executes(this::deleteCustomWorld))
             )
             .then(Commands.literal("timer")
                     .then(Commands.literal("start")
@@ -105,6 +107,11 @@ public class SharedHealthPluginCommands {
 
     private int endRun(CommandContext<CommandSourceStack> ctx) {
         this.plugin.getDimensionResetHandler().endRun();
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int deleteCustomWorld(CommandContext<CommandSourceStack> ctx) {
+        this.plugin.getDimensionResetHandler().deleteCustomWorld();
         return Command.SINGLE_SUCCESS;
     }
 

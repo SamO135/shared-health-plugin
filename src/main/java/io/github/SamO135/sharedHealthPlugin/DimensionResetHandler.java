@@ -92,4 +92,8 @@ public final class DimensionResetHandler {
     public void setPlugin(SharedHealthPlugin plugin){
         this.plugin = plugin;
     }
+
+    public void deleteCustomWorld() {
+        unloadAndDeleteWorld("world_run");
+    }
 }

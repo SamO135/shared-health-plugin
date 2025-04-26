@@ -19,6 +19,7 @@ public class SharedHealthPlugin extends JavaPlugin {
     public void onEnable() {
         // register the player listener
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        getServer().getPluginManager().registerEvents(new WorldTravelListener(), this);
 
         // register the commands
         SharedHealthPluginCommands commandTree = new SharedHealthPluginCommands(this);
