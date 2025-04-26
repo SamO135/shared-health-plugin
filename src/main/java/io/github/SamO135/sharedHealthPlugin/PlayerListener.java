@@ -91,6 +91,8 @@ class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        // When a player leaves and rejoins the server, by default the boss bar will not show for them regardless
+        // of their preferences, so I have to manually add them back to the bossbar when rejoining.
         if (plugin.isAttemptsShownFor(event.getPlayer())) {
             this.plugin.getAttemptTracker().addPlayer(event.getPlayer());
         }
