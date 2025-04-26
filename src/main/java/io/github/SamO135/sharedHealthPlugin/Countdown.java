@@ -8,9 +8,11 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.function.Consumer;
 
 public class Countdown implements Consumer<BukkitTask> {
+    private SharedHealthPlugin plugin;
     private int remainingTime;
 
-    public Countdown(int startTime) {
+    public Countdown(SharedHealthPlugin plugin, int startTime) {
+        this.plugin = plugin;
         this.remainingTime = startTime;
     }
 
@@ -30,6 +32,8 @@ public class Countdown implements Consumer<BukkitTask> {
 
         remainingTime--;
         if (remainingTime < 0) {
+            plugin.getTimer().reset();
+            plugin.getTimer().resume();
             task.cancel();
         }
     }

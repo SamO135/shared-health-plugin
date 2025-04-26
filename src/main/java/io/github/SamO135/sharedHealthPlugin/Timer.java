@@ -10,9 +10,7 @@ import java.time.Duration;
 public class Timer implements Runnable{
     private SharedHealthPlugin plugin;
     private int seconds = 0;
-    private int minutes = 0;
-    private int hours = 0;
-    private Duration duration;
+    private Duration duration = Duration.ofSeconds(0);
     private boolean paused = true;
 
     public Timer(SharedHealthPlugin plugin) {
@@ -25,13 +23,11 @@ public class Timer implements Runnable{
             // increment timer
             seconds++;
             duration = Duration.ofSeconds(seconds);
-            minutes = duration.toMinutesPart();
-            hours = duration.toHoursPart();
         }
 
         // create action bar message
         MiniMessage mm = MiniMessage.miniMessage();
-        Component message = mm.deserialize(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+        Component message = mm.deserialize(String.format("%02d:%02d:%02d", duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart()));
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (!this.plugin.isTimerHiddenFor(player)) {
                 player.sendActionBar(message);

@@ -99,19 +99,20 @@ public class SharedHealthPluginCommands {
     }
 
     private int startRun(CommandContext<CommandSourceStack> ctx) {
-        this.plugin.getDimensionResetHandler().startRun();
+        plugin.getDimensionResetHandler().startRun();
         int countdownTime = 5;
-        Bukkit.getScheduler().runTaskTimer(this.plugin, new Countdown(countdownTime), 1L, 30L);
+        Bukkit.getScheduler().runTaskTimer(plugin, new Countdown(plugin, countdownTime), 1L, 30L);
         return Command.SINGLE_SUCCESS;
     }
 
     private int endRun(CommandContext<CommandSourceStack> ctx) {
-        this.plugin.getDimensionResetHandler().endRun();
+        plugin.getDimensionResetHandler().endRun();
+        plugin.getTimer().pause();
         return Command.SINGLE_SUCCESS;
     }
 
     private int deleteCustomWorld(CommandContext<CommandSourceStack> ctx) {
-        this.plugin.getDimensionResetHandler().deleteCustomWorld();
+        plugin.getDimensionResetHandler().deleteCustomWorld();
         return Command.SINGLE_SUCCESS;
     }
 
