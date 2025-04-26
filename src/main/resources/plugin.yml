@@ -2,3 +2,8 @@ name: shared-health-plugin
 version: '1.0-SNAPSHOT'
 main: io.github.SamO135.sharedHealthPlugin.SharedHealthPlugin
 api-version: '1.21'
+
+permissions:
+  shared-health-plugin.global:
+    description: Allows the use of global and debug commands
+    default: op

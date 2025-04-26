@@ -20,6 +20,7 @@ public class SharedHealthPluginCommands {
 
     private LiteralArgumentBuilder<CommandSourceStack> commandTree = Commands.literal("sh")
             .then(Commands.literal("debug")
+                    .requires(this::senderHasPermission)
                     .then(Commands.literal("showLogs")
                             .then(Commands.argument("toggle", BoolArgumentType.bool())
                                     .executes(this::showLogs)))
@@ -32,10 +33,13 @@ public class SharedHealthPluginCommands {
             )
             .then(Commands.literal("timer")
                     .then(Commands.literal("start")
+                            .requires(this::senderHasPermission)
                             .executes(this::startTimer))
                     .then(Commands.literal("pause")
+                            .requires(this::senderHasPermission)
                             .executes(this::pauseTimer))
                     .then(Commands.literal("reset")
+                            .requires(this::senderHasPermission)
                             .executes(this::resetTimer))
                     .then(Commands.literal("show")
                             .executes(this::showTimer))
@@ -44,6 +48,7 @@ public class SharedHealthPluginCommands {
             )
             .then(Commands.literal("attempts")
                     .then(Commands.literal("reset")
+                            .requires(this::senderHasPermission)
                             .executes(this::resetAttempts))
                     .then(Commands.literal("show")
                             .executes(this::showAttempts))
@@ -51,6 +56,7 @@ public class SharedHealthPluginCommands {
                             .executes(this::hideAttempts))
             )
             .then(Commands.literal("run")
+                    .requires(this::senderHasPermission)
                     .then(Commands.literal("start")
                             .executes(this::startRun))
                     .then(Commands.literal("end")
@@ -154,6 +160,11 @@ public class SharedHealthPluginCommands {
 
     public LiteralCommandNode<CommandSourceStack> getCommandNode(){
         return commandTree.build();
+    }
+
+    private boolean senderHasPermission(CommandSourceStack source) {
+        if (!(source.getSender() instanceof Player playerSender)) return false;
+        return playerSender.hasPermission("shared-health-plugin.global");
     }
 }
 
