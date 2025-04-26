@@ -51,4 +51,9 @@ public class AttemptTracker {
             attemptBar.addPlayer(player);
         }
     }
+
+    public void deleteBossBar() {
+        attemptBar.removeAll();
+        attemptBar = null;
+    }
 }

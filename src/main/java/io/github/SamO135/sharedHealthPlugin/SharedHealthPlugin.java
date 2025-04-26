@@ -49,6 +49,13 @@ public class SharedHealthPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        Bukkit.getScheduler().cancelTasks(this);
+
+        if (attemptTracker != null) {
+            attemptTracker.deleteBossBar();
+        }
+
+        // Save data here
     }
 
     protected double syncPlayerHealth() {
