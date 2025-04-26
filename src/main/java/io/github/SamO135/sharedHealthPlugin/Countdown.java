@@ -3,6 +3,7 @@ package io.github.SamO135.sharedHealthPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.scheduler.BukkitTask;
@@ -48,6 +49,7 @@ public class Countdown implements Consumer<BukkitTask> {
 
         remainingTime--;
         if (remainingTime < 0) {
+            plugin.setPlayerGameMode(GameMode.SURVIVAL);
             plugin.getTimer().reset();
             plugin.getTimer().resume();
             task.cancel();

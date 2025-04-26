@@ -56,6 +56,7 @@ public final class DimensionResetHandler {
         Location spawnLocation = world.getSpawnLocation();
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.teleport(spawnLocation);
+            player.setRespawnLocation(spawnLocation, true);
         }
     }
 

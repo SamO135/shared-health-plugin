@@ -1,7 +1,9 @@
 package io.github.SamO135.sharedHealthPlugin;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.WorldCreator;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -94,11 +96,40 @@ public class SharedHealthPlugin extends JavaPlugin {
         return attemptTracker;
     }
 
-    public void clearPlayersInventory() {
+    public void resetPlayers() {
         for (Player player : Bukkit.getOnlinePlayers()) {
+            // clear inventory and potion effects
             player.getInventory().clear();
             player.getInventory().setArmorContents(null);
             player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
+
+            // reset health and hunger
+            double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getDefaultValue();
+            player.setHealth(maxHealth);
+            player.setFoodLevel(20);
+            player.setSaturation(5f);
+
+            // reset experience
+            player.setLevel(0);
+            player.setExp(0f);
+
+            // extinguish if on fire
+            player.setFireTicks(0);
+
+            // reset velocity
+            player.setVelocity(player.getVelocity().setX(0).setY(0).setZ(0));
+
+            // reset fall damage
+            player.setFallDistance(0f);
+
+            // set gamemode to adventure
+            player.setGameMode(GameMode.ADVENTURE);
+        }
+    }
+
+    public void setPlayerGameMode(GameMode gameMode) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.setGameMode(gameMode);
         }
     }
 }
