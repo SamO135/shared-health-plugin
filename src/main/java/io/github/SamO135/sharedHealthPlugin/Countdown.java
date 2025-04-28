@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.function.Consumer;
 
 public class Countdown implements Consumer<BukkitTask> {
-    private SharedHealthPlugin plugin;
+    private final SharedHealthPlugin plugin;
     private int remainingTime;
 
     public Countdown(SharedHealthPlugin plugin, int startTime) {

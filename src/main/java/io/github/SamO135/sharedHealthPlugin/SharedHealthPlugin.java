@@ -1,5 +1,7 @@
 package io.github.SamO135.sharedHealthPlugin;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.WorldCreator;
@@ -139,5 +141,10 @@ public class SharedHealthPlugin extends JavaPlugin {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.setGameMode(gameMode);
         }
+    }
+
+    public Component createMessageComponent(String message) {
+        MiniMessage mm = MiniMessage.miniMessage();
+        return mm.deserialize(message);
     }
 }

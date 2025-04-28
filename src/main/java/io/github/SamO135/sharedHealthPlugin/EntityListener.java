@@ -6,7 +6,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.entity.EnderDragon;
 
 public class EntityListener implements Listener {
-    private SharedHealthPlugin plugin;
+    private final SharedHealthPlugin plugin;
 
     public EntityListener(SharedHealthPlugin plugin) {
         this.plugin = plugin;
