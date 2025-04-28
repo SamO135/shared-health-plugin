@@ -1,6 +1,5 @@
 package io.github.SamO135.sharedHealthPlugin;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,7 +12,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 class PlayerListener implements Listener {
-    private SharedHealthPlugin plugin;
+    private final SharedHealthPlugin plugin;
     private Player lastSatiatedHealPlayer;
     private long lastSatiatedHealTime = 0L;
 
@@ -35,12 +34,11 @@ class PlayerListener implements Listener {
         }
 
         // create chat message
-        MiniMessage mm = MiniMessage.miniMessage();
-        Component message = mm.deserialize(damagedPlayer.getName() + "<grey> has taken <color:#f61c21>" + damage + " ❤<grey> damage.");
+        Component message = plugin.createMessageComponent(damagedPlayer.getName() + "<grey> has taken <color:#f61c21>" + damage + " ❤<grey> damage.");
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.sendMessage(message);
-            if (player != damagedPlayer){
+            if (player != damagedPlayer) {
                 player.damage(damage);
             }
         }
@@ -53,19 +51,18 @@ class PlayerListener implements Listener {
         if (event.getRegainReason() == RegainReason.CUSTOM) return;
 
         // logging
-        if (plugin.loggingEnabled){
+        if (plugin.loggingEnabled) {
             plugin.getLogger().info(healedPlayer.getName() + " healed " + event.getAmount() + " from " + event.getRegainReason() + " with " + healedPlayer.getSaturation() + " saturation");
         }
 
         double healAmount = event.getAmount();
 
-        if (event.getRegainReason() == RegainReason.SATIATED && lastSatiatedHealPlayer != healedPlayer){
+        if (event.getRegainReason() == RegainReason.SATIATED && lastSatiatedHealPlayer != healedPlayer) {
             long timeNow = System.currentTimeMillis();
             long satiatedHealCooldownMS = 500;
-            if (timeNow - lastSatiatedHealTime < satiatedHealCooldownMS){
+            if (timeNow - lastSatiatedHealTime < satiatedHealCooldownMS) {
                 event.setCancelled(true);
-            }
-            else {
+            } else {
                 lastSatiatedHealTime = timeNow;
                 lastSatiatedHealPlayer = healedPlayer;
             }

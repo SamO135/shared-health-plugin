@@ -7,6 +7,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,9 +22,9 @@ public class SharedHealthPluginCommands {
     private LiteralArgumentBuilder<CommandSourceStack> commandTree = Commands.literal("sh")
             .then(Commands.literal("debug")
                     .requires(this::senderHasPermission)
-                    .then(Commands.literal("showLogs")
+                    .then(Commands.literal("showHealthLogs")
                             .then(Commands.argument("toggle", BoolArgumentType.bool())
-                                    .executes(this::showLogs)))
+                                    .executes(this::showHealthLogs)))
                     .then(Commands.literal("logPlayerHealth")
                             .executes(this::logPlayerHealth))
                     .then(Commands.literal("syncPlayerHealth")
@@ -63,40 +64,65 @@ public class SharedHealthPluginCommands {
                             .executes(this::endRun))
             );
 
-    private int showLogs(CommandContext<CommandSourceStack> ctx) {
+    private int showHealthLogs(CommandContext<CommandSourceStack> ctx) {
         plugin.loggingEnabled = ctx.getArgument("toggle", boolean.class);
+
+        // send player message
+        Component message = plugin.createMessageComponent("player health logs is now set to: " + plugin.loggingEnabled);
+        ctx.getSource().getSender().sendMessage(message);
+
         return Command.SINGLE_SUCCESS;
     }
 
     private int logPlayerHealth(CommandContext<CommandSourceStack> ctx) {
+        Component message;
         for (Player player : Bukkit.getOnlinePlayers()) {
+            message = plugin.createMessageComponent(player.getName() + ": " + player.getHealth() + " health");
+            ctx.getSource().getSender().sendMessage(message);
             plugin.getLogger().info(player.getName() + ": " + player.getHealth() + " health");
         }
         return Command.SINGLE_SUCCESS;
     }
 
     private int syncPlayerHealth(CommandContext<CommandSourceStack> ctx) {
-        double syncedHealth = plugin.syncPlayerHealth();
-        plugin.getLogger().info("All player's health synced to: " + syncedHealth);
+        // send message to player
+        Component message = plugin.createMessageComponent("All players' health synced to: " + plugin.syncPlayerHealth());
+        ctx.getSource().getSender().sendMessage(message);
         return Command.SINGLE_SUCCESS;
     }
 
     private int startTimer(CommandContext<CommandSourceStack> ctx) {
+        // send player message
+        Component message = plugin.createMessageComponent("Start timer");
+        ctx.getSource().getSender().sendMessage(message);
+
         plugin.getTimer().resume();
         return Command.SINGLE_SUCCESS;
     }
 
     private int pauseTimer(CommandContext<CommandSourceStack> ctx) {
+        // send player message
+        Component message = plugin.createMessageComponent("Pause timer");
+        ctx.getSource().getSender().sendMessage(message);
+
         plugin.getTimer().pause();
         return Command.SINGLE_SUCCESS;
     }
 
     private int resetTimer(CommandContext<CommandSourceStack> ctx) {
+        // send player message
+        Component message = plugin.createMessageComponent("Reset timer");
+        ctx.getSource().getSender().sendMessage(message);
+
         plugin.getTimer().reset();
         return Command.SINGLE_SUCCESS;
     }
 
     private int showTimer(CommandContext<CommandSourceStack> ctx) {
+        // send player message
+        Component message = plugin.createMessageComponent("Show timer");
+        ctx.getSource().getSender().sendMessage(message);
+
         CommandSender sender = ctx.getSource().getSender();
         if (sender instanceof Player player){
             plugin.showTimerFor(player);
@@ -105,6 +131,10 @@ public class SharedHealthPluginCommands {
     }
 
     private int hideTimer(CommandContext<CommandSourceStack> ctx) {
+        // send player message
+        Component message = plugin.createMessageComponent("Hide timer");
+        ctx.getSource().getSender().sendMessage(message);
+
         CommandSender sender = ctx.getSource().getSender();
         if (sender instanceof Player player){
             plugin.hideTimerFor(player);
@@ -113,6 +143,10 @@ public class SharedHealthPluginCommands {
     }
 
     private int startRun(CommandContext<CommandSourceStack> ctx) {
+        // send message to players
+        Component message = plugin.createMessageComponent("Creating new world. You will be teleported shortly...");
+        Bukkit.getServer().sendMessage(message);
+
         plugin.getDimensionResetHandler().startRun();
         plugin.resetPlayers();
         plugin.getAttemptTracker().incrementAttempt();
@@ -127,22 +161,44 @@ public class SharedHealthPluginCommands {
     }
 
     private int endRun(CommandContext<CommandSourceStack> ctx) {
+        //send message to players
+        Component message = plugin.createMessageComponent("Run ended. Time: " + plugin.getTimer().getTime());
+        Bukkit.getServer().sendMessage(message);
+
         plugin.getDimensionResetHandler().endRun();
         plugin.getTimer().pause();
         return Command.SINGLE_SUCCESS;
     }
 
     private int deleteCustomWorld(CommandContext<CommandSourceStack> ctx) {
-        plugin.getDimensionResetHandler().deleteCustomWorld();
+        boolean deleted = plugin.getDimensionResetHandler().deleteCustomWorld();
+        Component message;
+
+        // send message to player
+        if (deleted) {
+            message = plugin.createMessageComponent("Custom dimension has been deleted");
+        } else {
+            message = plugin.createMessageComponent("Custom dimension could not be deleted");
+        }
+        ctx.getSource().getSender().sendMessage(message);
+
         return Command.SINGLE_SUCCESS;
     }
 
     private int resetAttempts(CommandContext<CommandSourceStack> ctx) {
+        // send player message
+        Component message = plugin.createMessageComponent("Reset attempts");
+        ctx.getSource().getSender().sendMessage(message);
+
         plugin.getAttemptTracker().reset();
         return Command.SINGLE_SUCCESS;
     }
 
     private int showAttempts(CommandContext<CommandSourceStack> ctx) {
+        // send player message
+        Component message = plugin.createMessageComponent("Show attempts");
+        ctx.getSource().getSender().sendMessage(message);
+
         if (ctx.getSource().getSender() instanceof Player sender) {
             plugin.getAttemptTracker().addPlayer(sender);
             plugin.showAttemptsFor(sender);
@@ -151,6 +207,10 @@ public class SharedHealthPluginCommands {
     }
 
     private int hideAttempts(CommandContext<CommandSourceStack> ctx) {
+        // send player message
+        Component message = plugin.createMessageComponent("Hide attempts");
+        ctx.getSource().getSender().sendMessage(message);
+
         if (ctx.getSource().getSender() instanceof Player sender) {
             plugin.getAttemptTracker().removePlayer(sender);
             plugin.hideAttemptsFor(sender);

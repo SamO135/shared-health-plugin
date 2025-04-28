@@ -1,7 +1,5 @@
 package io.github.SamO135.sharedHealthPlugin;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.codehaus.plexus.util.FileUtils;
@@ -25,11 +23,6 @@ public final class DimensionResetHandler {
     }
 
     public void startRun() {
-        // send message to players
-        MiniMessage mm = MiniMessage.miniMessage();
-        Component message = mm.deserialize("Creating new world. You will be teleported shortly...");
-        Bukkit.getServer().sendMessage(message);
-
         // unload and delete dimensions
         unloadAndDeleteWorld("world_run");
         unloadAndDeleteWorld("world_nether");
@@ -60,27 +53,33 @@ public final class DimensionResetHandler {
         }
     }
 
-    private void unloadAndDeleteWorld(String name) {
+    private boolean unloadAndDeleteWorld(String name) {
         World world = Bukkit.getWorld(name);
         if (world == null) {
             this.plugin.getLogger().info("Could not delete '" + name + "'. That world could not be found.");
-            return;
+            return false;
         }
 
         // unload world
         boolean unloaded = Bukkit.unloadWorld(world, false);
         this.plugin.getLogger().info("Unloaded '" + world.getName() + "': " + unloaded);
+        if (!unloaded) {
+            return false;
+        }
 
         // delete world
         File deleteFolder = world.getWorldFolder();
         if (deleteFolder.exists()){
             try {
                 FileUtils.deleteDirectory(deleteFolder);
+
             }
             catch (IOException e) {
                 this.plugin.getLogger().info("World folder for '" + world.getName() + "' could not be found.");
+                return false;
             }
         }
+        return true;
     }
 
     private World createNewWorld(String name, World.Environment environment, WorldType worldType) {
@@ -94,7 +93,7 @@ public final class DimensionResetHandler {
         this.plugin = plugin;
     }
 
-    public void deleteCustomWorld() {
-        unloadAndDeleteWorld("world_run");
+    public boolean deleteCustomWorld() {
+        return unloadAndDeleteWorld("world_run");
     }
 }
