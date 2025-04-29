@@ -39,7 +39,10 @@ class PlayerListener implements Listener {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.sendMessage(message);
             if (player != damagedPlayer) {
-                player.setHealth(Math.max(0, player.getHealth() - damage)); // apply raw damage, ignoring other players' armour etc.
+                // scuffed but works (I think)
+                double newHealth = Math.max(0.0, player.getHealth() - damage);
+                player.damage(damage); // apply damage normally for the on-hit effects (sound, knockback etc.)
+                player.setHealth(newHealth); // set health manually to bypass damage modifiers (armour etc.)
             }
         }
     }
