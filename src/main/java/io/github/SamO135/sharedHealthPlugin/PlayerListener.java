@@ -39,10 +39,9 @@ class PlayerListener implements Listener {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.sendMessage(message);
             if (player != damagedPlayer) {
-                player.damage(damage);
+                player.setHealth(Math.max(0, player.getHealth() - damage)); // apply raw damage, ignoring other players' armour etc.
             }
         }
-//        syncPlayerHealth();
     }
 
     @EventHandler
@@ -62,6 +61,7 @@ class PlayerListener implements Listener {
             long satiatedHealCooldownMS = 500;
             if (timeNow - lastSatiatedHealTime < satiatedHealCooldownMS) {
                 event.setCancelled(true);
+                return;
             } else {
                 lastSatiatedHealTime = timeNow;
                 lastSatiatedHealPlayer = healedPlayer;
@@ -72,7 +72,6 @@ class PlayerListener implements Listener {
                 player.heal(healAmount, RegainReason.CUSTOM);
             }
         }
-//        syncPlayerHealth();
     }
 
     @EventHandler
