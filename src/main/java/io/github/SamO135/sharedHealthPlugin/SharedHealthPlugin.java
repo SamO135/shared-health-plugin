@@ -20,6 +20,7 @@ public class SharedHealthPlugin extends JavaPlugin {
     private Set<UUID> showTimerPlayers = new HashSet<>();
     private Set<UUID> showAttemptsPlayers = new HashSet<>();
     private DimensionResetHandler dimensionResetHandler;
+    private DamageTrackerScoreboardObjective damageTrackerScoreboardObjective;
 
     @Override
     public void onEnable() {
@@ -47,6 +48,9 @@ public class SharedHealthPlugin extends JavaPlugin {
 
         // load custom dimension - needed so players can rejoin the server in this dimension
         new WorldCreator("world_run").createWorld();
+
+        // Add custom scoreboard objective
+        damageTrackerScoreboardObjective = new DamageTrackerScoreboardObjective();
     }
 
     @Override
@@ -106,6 +110,10 @@ public class SharedHealthPlugin extends JavaPlugin {
         return attemptTracker;
     }
 
+    public DamageTrackerScoreboardObjective getDamageTrackerScoreboardObjective() {
+        return damageTrackerScoreboardObjective;
+    }
+
     public void resetPlayers() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             // clear inventory and potion effects
@@ -134,6 +142,9 @@ public class SharedHealthPlugin extends JavaPlugin {
 
             // set gamemode to adventure
             player.setGameMode(GameMode.ADVENTURE);
+
+            // reset damage tracker scoreboard objective
+            damageTrackerScoreboardObjective.resetDamage(player);
         }
     }
 

@@ -29,6 +29,9 @@ class PlayerListener implements Listener {
         double damage = event.getFinalDamage();
         DamageCause damageCause = event.getCause();
 
+        // update scoreboard
+        plugin.getDamageTrackerScoreboardObjective().incrementDamage(damagedPlayer, damage);
+
         // logging
         if (plugin.loggingEnabled) {
             plugin.getLogger().info(damagedPlayer.getName() + " took " + damage + " damage from: " + damageCause);
