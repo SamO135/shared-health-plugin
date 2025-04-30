@@ -59,6 +59,8 @@ resource pack to your server](#how-to-add-the-boss-bar-resource-pack-to-your-ser
 ## Notes
 - Restarting the server will reset all the data to do with this plugin back to the default values (attempts, timer, 
 user preference).
+- Potion effects are not shared - **including absorption** - but damage taken to a player's absorption hearts is not 
+propagated. i.e. it acts like shield for that player.
 
 ## Installation
 
