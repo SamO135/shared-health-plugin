@@ -6,9 +6,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 class PlayerListener implements Listener {
@@ -23,6 +23,7 @@ class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerTakeDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player damagedPlayer)) return;
+        // prevent a stack overflow error
         if (event.getCause() == DamageCause.CUSTOM) return;
 
         double damage = event.getFinalDamage();
@@ -42,7 +43,9 @@ class PlayerListener implements Listener {
                 // scuffed but works (I think)
                 double newHealth = Math.max(0.0, player.getHealth() - damage);
                 player.damage(damage); // apply damage normally for the on-hit effects (sound, knockback etc.)
-                player.setHealth(newHealth); // set health manually to bypass damage modifiers (armour etc.)
+                if (!player.isDead()){
+                    player.setHealth(newHealth); // set health manually to bypass damage modifiers (armour etc.)
+                }
             }
         }
     }
@@ -50,6 +53,7 @@ class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerRegainHealth(EntityRegainHealthEvent event) {
         if (!(event.getEntity() instanceof Player healedPlayer)) return;
+        // prevent a stack overflow error
         if (event.getRegainReason() == RegainReason.CUSTOM) return;
 
         // logging
@@ -77,13 +81,15 @@ class PlayerListener implements Listener {
         }
     }
 
+    /// In case of any bugs, this will make sure all players die together
     @EventHandler
-    public void onPlayerDeath(EntityDeathEvent event) {
-        if (!(event.getEntity() instanceof Player deadPlayer)) return;
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        // prevent multiple death messages
+        if (event.getPlayer().getLastDamageCause().getCause() == DamageCause.CUSTOM) return;
 
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player != deadPlayer && !player.isDead()) {
-                player.setHealth(0.0);
+            if (player != event.getPlayer() && !player.isDead()) {
+                player.damage(999999999);
             }
         }
     }
