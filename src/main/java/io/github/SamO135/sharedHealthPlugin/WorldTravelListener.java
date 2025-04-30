@@ -12,16 +12,28 @@ public class WorldTravelListener implements Listener {
     @EventHandler
     public void onPlayerPortal(PlayerPortalEvent event) {
         World fromWorld = event.getFrom().getWorld();
+        if (fromWorld == null) return;
 
-        //check if player is exiting the nether or end
-        if (fromWorld.getEnvironment() == World.Environment.NETHER ||
-            fromWorld.getEnvironment() == World.Environment.THE_END) {
-            World targetWorld = Bukkit.getWorld("world_run");
+        World targetWorld = Bukkit.getWorld("world_run");
+        if (targetWorld == null) return;
 
-            if (targetWorld != null) {
-                Location spawnLocation = targetWorld.getSpawnLocation();
-                event.setTo(spawnLocation);
-            }
+        // check if player is exiting the nether or end
+        if (fromWorld.getEnvironment() == World.Environment.THE_END) {
+            // find player's spawn location
+            Location playerSpawn = event.getPlayer().getRespawnLocation();
+            Location worldSpawn = targetWorld.getSpawnLocation();
+            Location targetLocation = playerSpawn != null ? playerSpawn : worldSpawn;
+
+            event.setTo(targetLocation);
+        } else if (fromWorld.getEnvironment() == World.Environment.NETHER) {
+            Location from = event.getFrom();
+            Location targetLocation = new Location(
+                    targetWorld, from.getX() * 8.0,
+                    from.getY(), from.getZ() * 8.0,
+                    from.getYaw(),
+                    from.getPitch()
+            );
+            event.setTo(targetLocation);
         }
     }
 }
